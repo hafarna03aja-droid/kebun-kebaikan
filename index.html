@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kebun Kebaikan 🌙 v4.0 Ultimate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .glass-dark {
+      background: rgba(13, 47, 51, 0.95);
+      backdrop-filter: blur(16px);
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-10px)
+      }
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(1.3)
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: rotate(0)
+      }
+
+      25% {
+        transform: rotate(-8deg)
+      }
+
+      75% {
+        transform: rotate(8deg)
+      }
+    }
+
+    @keyframes confetti {
+      0% {
+        transform: translateY(0) rotate(0);
+        opacity: 1
+      }
+
+      100% {
+        transform: translateY(350px) rotate(720deg);
+        opacity: 0
+      }
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.4)
+      }
+
+      50% {
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.8)
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(15px)
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.05)
+      }
+    }
+
+    .animate-bounce-slow {
+      animation: bounce 3s infinite;
+    }
+
+    .float-dinar {
+      animation: floatUp 1s ease-out forwards;
+    }
+
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    .animate-glow {
+      animation: glow 2s infinite;
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .animate-pulse-slow {
+      animation: pulse 2s infinite;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      animation: confetti 2.5s ease-out forwards;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+    }
+
+    .juz-box {
+      transition: all 0.3s ease;
+    }
+
+    .juz-box:hover {
+      transform: scale(1.05);
+    }
+
+    .juz-completed {
+      background: linear-gradient(135deg, #D4AF37 0%, #F4E4A6 50%, #D4AF37 100%);
+      color: #1a1a2e;
+    }
+
+    .header-gradient {
+      background: linear-gradient(135deg, #0d2f33 0%, #115e59 50%, #134e4a 100%);
+    }
+
+    .gold-text {
+      color: #D4AF37;
+    }
+
+    .gold-bg {
+      background-color: #D4AF37;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-teal-800 to-teal-950 min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+
+    // ==================== DATA ====================
+    const quizQuestions = [
+      { q: "Siapakah Nabi terakhir?", options: ["Nabi Musa", "Nabi Isa", "Nabi Muhammad ﷺ", "Nabi Ibrahim"], answer: 2 },
+      { q: "Berapa rakaat Shalat Subuh?", options: ["2 Rakaat", "3 Rakaat", "4 Rakaat", "1 Rakaat"], answer: 0 },
+      { q: "Surah wajib dalam shalat?", options: ["Al-Ikhlas", "Al-Falaq", "Al-Fatihah", "An-Nas"], answer: 2 },
+      { q: "Bulan puasa adalah?", options: ["Syawal", "Dzulhijjah", "Ramadhan", "Muharram"], answer: 2 },
+      { q: "Jumlah Asmaul Husna?", options: ["99", "100", "50", "25"], answer: 0 },
+      { q: "Nabi Muhammad ﷺ lahir di?", options: ["Madinah", "Makkah", "Thaif", "Yerusalem"], answer: 1 },
+      { q: "Kitab Nabi Daud?", options: ["Taurat", "Injil", "Zabur", "Al-Quran"], answer: 2 },
+      { q: "Jumlah surat Al-Quran?", options: ["100", "114", "120", "99"], answer: 1 },
+    ];
+
+    const surahList = [
+      { id: 1, name: "Al-Fatihah", arabic: "الفاتحة", ayat: 7, juz: 1 },
+      { id: 2, name: "Al-Baqarah", arabic: "البقرة", ayat: 286, juz: 1 },
+      { id: 3, name: "Ali 'Imran", arabic: "آل عمران", ayat: 200, juz: 3 },
+      { id: 4, name: "An-Nisa", arabic: "النساء", ayat: 176, juz: 4 },
+      { id: 5, name: "Al-Ma'idah", arabic: "المائدة", ayat: 120, juz: 6 },
+      { id: 6, name: "Al-An'am", arabic: "الأنعام", ayat: 165, juz: 7 },
+      { id: 7, name: "Al-A'raf", arabic: "الأعراف", ayat: 206, juz: 8 },
+      { id: 8, name: "Al-Anfal", arabic: "الأنفال", ayat: 75, juz: 9 },
+      { id: 9, name: "At-Taubah", arabic: "التوبة", ayat: 129, juz: 10 },
+      { id: 10, name: "Yunus", arabic: "يونس", ayat: 109, juz: 11 },
+      { id: 11, name: "Hud", arabic: "هود", ayat: 123, juz: 11 },
+      { id: 12, name: "Yusuf", arabic: "يوسف", ayat: 111, juz: 12 },
+      { id: 13, name: "Ar-Ra'd", arabic: "الرعد", ayat: 43, juz: 13 },
+      { id: 14, name: "Ibrahim", arabic: "ابراهيم", ayat: 52, juz: 13 },
+      { id: 15, name: "Al-Hijr", arabic: "الحجر", ayat: 99, juz: 14 },
+      { id: 16, name: "An-Nahl", arabic: "النحل", ayat: 128, juz: 14 },
+      { id: 17, name: "Al-Isra", arabic: "الإسراء", ayat: 111, juz: 15 },
+      { id: 18, name: "Al-Kahf", arabic: "الكهف", ayat: 110, juz: 15 },
+      { id: 19, name: "Maryam", arabic: "مريم", ayat: 98, juz: 16 },
+      { id: 20, name: "Taha", arabic: "طه", ayat: 135, juz: 16 },
+      { id: 21, name: "Al-Anbiya", arabic: "الأنبياء", ayat: 112, juz: 17 },
+      { id: 22, name: "Al-Hajj", arabic: "الحج", ayat: 78, juz: 17 },
+      { id: 23, name: "Al-Mu'minun", arabic: "المؤمنون", ayat: 118, juz: 18 },
+      { id: 24, name: "An-Nur", arabic: "النور", ayat: 64, juz: 18 },
+      { id: 25, name: "Al-Furqan", arabic: "الفرقان", ayat: 77, juz: 18 },
+      { id: 26, name: "Ash-Shu'ara", arabic: "الشعراء", ayat: 227, juz: 19 },
+      { id: 27, name: "An-Naml", arabic: "النمل", ayat: 93, juz: 19 },
+      { id: 28, name: "Al-Qasas", arabic: "القصص", ayat: 88, juz: 20 },
+      { id: 29, name: "Al-Ankabut", arabic: "العنكبوت", ayat: 69, juz: 20 },
+      { id: 30, name: "Ar-Rum", arabic: "الروم", ayat: 60, juz: 21 },
+      { id: 31, name: "Luqman", arabic: "لقمان", ayat: 34, juz: 21 },
+      { id: 32, name: "As-Sajdah", arabic: "السجدة", ayat: 30, juz: 21 },
+      { id: 33, name: "Al-Ahzab", arabic: "الأحزاب", ayat: 73, juz: 21 },
+      { id: 34, name: "Saba", arabic: "سبإ", ayat: 54, juz: 22 },
+      { id: 35, name: "Fatir", arabic: "فاطر", ayat: 45, juz: 22 },
+      { id: 36, name: "Ya Sin", arabic: "يس", ayat: 83, juz: 22 },
+      { id: 37, name: "As-Saffat", arabic: "الصافات", ayat: 182, juz: 23 },
+      { id: 38, name: "Sad", arabic: "ص", ayat: 88, juz: 23 },
+      { id: 39, name: "Az-Zumar", arabic: "الزمر", ayat: 75, juz: 23 },
+      { id: 40, name: "Ghafir", arabic: "غافر", ayat: 85, juz: 24 },
+      { id: 41, name: "Fussilat", arabic: "فصلت", ayat: 54, juz: 24 },
+      { id: 42, name: "Ash-Shura", arabic: "الشورى", ayat: 53, juz: 25 },
+      { id: 43, name: "Az-Zukhruf", arabic: "الزخرف", ayat: 89, juz: 25 },
+      { id: 44, name: "Ad-Dukhan", arabic: "الدخان", ayat: 59, juz: 25 },
+      { id: 45, name: "Al-Jathiyah", arabic: "الجاثية", ayat: 37, juz: 25 },
+      { id: 46, name: "Al-Ahqaf", arabic: "الأحقاف", ayat: 35, juz: 26 },
+      { id: 47, name: "Muhammad", arabic: "محمد", ayat: 38, juz: 26 },
+      { id: 48, name: "Al-Fath", arabic: "الفتح", ayat: 29, juz: 26 },
+      { id: 49, name: "Al-Hujurat", arabic: "الحجرات", ayat: 18, juz: 26 },
+      { id: 50, name: "Qaf", arabic: "ق", ayat: 45, juz: 26 },
+      { id: 51, name: "Adh-Dhariyat", arabic: "الذاريات", ayat: 60, juz: 26 },
+      { id: 52, name: "At-Tur", arabic: "الطور", ayat: 49, juz: 27 },
+      { id: 53, name: "An-Najm", arabic: "النجم", ayat: 62, juz: 27 },
+      { id: 54, name: "Al-Qamar", arabic: "القمر", ayat: 55, juz: 27 },
+      { id: 55, name: "Ar-Rahman", arabic: "الرحمن", ayat: 78, juz: 27 },
+      { id: 56, name: "Al-Waqi'ah", arabic: "الواقعة", ayat: 96, juz: 27 },
+      { id: 57, name: "Al-Hadid", arabic: "الحديد", ayat: 29, juz: 27 },
+      { id: 58, name: "Al-Mujadila", arabic: "المجادلة", ayat: 22, juz: 28 },
+      { id: 59, name: "Al-Hashr", arabic: "الحشر", ayat: 24, juz: 28 },
+      { id: 60, name: "Al-Mumtahanah", arabic: "الممتحنة", ayat: 13, juz: 28 },
+      { id: 61, name: "As-Saff", arabic: "الصف", ayat: 14, juz: 28 },
+      { id: 62, name: "Al-Jumu'ah", arabic: "الجمعة", ayat: 11, juz: 28 },
+      { id: 63, name: "Al-Munafiqun", arabic: "المنافقون", ayat: 11, juz: 28 },
+      { id: 64, name: "At-Taghabun", arabic: "التغابن", ayat: 18, juz: 28 },
+      { id: 65, name: "At-Talaq", arabic: "الطلاق", ayat: 12, juz: 28 },
+      { id: 66, name: "At-Tahrim", arabic: "التحريم", ayat: 12, juz: 28 },
+      { id: 67, name: "Al-Mulk", arabic: "الملك", ayat: 30, juz: 29 },
+      { id: 68, name: "Al-Qalam", arabic: "القلم", ayat: 52, juz: 29 },
+      { id: 69, name: "Al-Haqqah", arabic: "الحاقة", ayat: 52, juz: 29 },
+      { id: 70, name: "Al-Ma'arij", arabic: "المعارج", ayat: 44, juz: 29 },
+      { id: 71, name: "Nuh", arabic: "نوح", ayat: 28, juz: 29 },
+      { id: 72, name: "Al-Jinn", arabic: "الجن", ayat: 28, juz: 29 },
+      { id: 73, name: "Al-Muzzammil", arabic: "المزمل", ayat: 20, juz: 29 },
+      { id: 74, name: "Al-Muddaththir", arabic: "المدثر", ayat: 56, juz: 29 },
+      { id: 75, name: "Al-Qiyamah", arabic: "القيامة", ayat: 40, juz: 29 },
+      { id: 76, name: "Al-Insan", arabic: "الانسان", ayat: 31, juz: 29 },
+      { id: 77, name: "Al-Mursalat", arabic: "المرسلات", ayat: 50, juz: 29 },
+      { id: 78, name: "An-Naba", arabic: "النبإ", ayat: 40, juz: 30 },
+      { id: 79, name: "An-Nazi'at", arabic: "النازعات", ayat: 46, juz: 30 },
+      { id: 80, name: "Abasa", arabic: "عبس", ayat: 42, juz: 30 },
+      { id: 81, name: "At-Takwir", arabic: "التكوير", ayat: 29, juz: 30 },
+      { id: 82, name: "Al-Infitar", arabic: "الإنفطار", ayat: 19, juz: 30 },
+      { id: 83, name: "Al-Mutaffifin", arabic: "المطففين", ayat: 36, juz: 30 },
+      { id: 84, name: "Al-Inshiqaq", arabic: "الإنشقاق", ayat: 25, juz: 30 },
+      { id: 85, name: "Al-Buruj", arabic: "البروج", ayat: 22, juz: 30 },
+      { id: 86, name: "At-Tariq", arabic: "الطارق", ayat: 17, juz: 30 },
+      { id: 87, name: "Al-A'la", arabic: "الأعلى", ayat: 19, juz: 30 },
+      { id: 88, name: "Al-Ghashiyah", arabic: "الغاشية", ayat: 26, juz: 30 },
+      { id: 89, name: "Al-Fajr", arabic: "الفجر", ayat: 30, juz: 30 },
+      { id: 90, name: "Al-Balad", arabic: "البلد", ayat: 20, juz: 30 },
+      { id: 91, name: "Ash-Shams", arabic: "الشمس", ayat: 15, juz: 30 },
+      { id: 92, name: "Al-Layl", arabic: "الليل", ayat: 21, juz: 30 },
+      { id: 93, name: "Ad-Duha", arabic: "الضحى", ayat: 11, juz: 30 },
+      { id: 94, name: "Ash-Sharh", arabic: "الشرح", ayat: 8, juz: 30 },
+      { id: 95, name: "At-Tin", arabic: "التين", ayat: 8, juz: 30 },
+      { id: 96, name: "Al-Alaq", arabic: "العلق", ayat: 19, juz: 30 },
+      { id: 97, name: "Al-Qadr", arabic: "القدر", ayat: 5, juz: 30 },
+      { id: 98, name: "Al-Bayyinah", arabic: "البينة", ayat: 8, juz: 30 },
+      { id: 99, name: "Az-Zalzalah", arabic: "الزلزلة", ayat: 8, juz: 30 },
+      { id: 100, name: "Al-Adiyat", arabic: "العاديات", ayat: 11, juz: 30 },
+      { id: 101, name: "Al-Qari'ah", arabic: "القارعة", ayat: 11, juz: 30 },
+      { id: 102, name: "At-Takathur", arabic: "التكاثر", ayat: 8, juz: 30 },
+      { id: 103, name: "Al-Asr", arabic: "العصر", ayat: 3, juz: 30 },
+      { id: 104, name: "Al-Humazah", arabic: "الهمزة", ayat: 9, juz: 30 },
+      { id: 105, name: "Al-Fil", arabic: "الفيل", ayat: 5, juz: 30 },
+      { id: 106, name: "Quraish", arabic: "قريش", ayat: 4, juz: 30 },
+      { id: 107, name: "Al-Ma'un", arabic: "الماعون", ayat: 7, juz: 30 },
+      { id: 108, name: "Al-Kawthar", arabic: "الكوثر", ayat: 3, juz: 30 },
+      { id: 109, name: "Al-Kafirun", arabic: "الكافرون", ayat: 6, juz: 30 },
+      { id: 110, name: "An-Nasr", arabic: "النصر", ayat: 3, juz: 30 },
+      { id: 111, name: "Al-Masad", arabic: "المسد", ayat: 5, juz: 30 },
+      { id: 112, name: "Al-Ikhlas", arabic: "الإخلاص", ayat: 4, juz: 30 },
+      { id: 113, name: "Al-Falaq", arabic: "الفلق", ayat: 5, juz: 30 },
+      { id: 114, name: "An-Nas", arabic: "الناس", ayat: 6, juz: 30 },
+    ];
+
+    const plantSkins = [
+      { id: 'normal', name: 'Pohon Biasa', emoji: '🌳', rarity: 'Common', color: 'text-green-500', chance: 50 },
+      { id: 'cemara', name: 'Cemara Salju', emoji: '🌲', rarity: 'Rare', color: 'text-blue-400', chance: 30 },
+      { id: 'kurma', name: 'Kurma Emas', emoji: '🌴', rarity: 'Epic', color: 'text-yellow-400', chance: 15 },
+      { id: 'kaktus', name: 'Kaktus Pelangi', emoji: '🌵', rarity: 'Legendary', color: 'text-purple-400', chance: 5 },
+    ];
+
+    const achievements = [
+      { id: 'subuh', name: 'Pejuang Subuh', desc: 'Shalat Subuh 3x', icon: '🌅', taskId: 1, required: 3 },
+      { id: 'sedekah', name: 'Dermawan Cilik', desc: 'Sedekah 5x', icon: '💝', taskId: 9, required: 5 },
+      { id: 'quran', name: 'Kutu Buku', desc: 'Baca Quran 5x', icon: '📖', taskId: 7, required: 5 },
+    ];
+
+    const defaultTasks = [
+      { id: 1, text: 'Shalat Subuh', completed: false },
+      { id: 2, text: 'Shalat Dzuhur', completed: false },
+      { id: 3, text: 'Shalat Ashar', completed: false },
+      { id: 4, text: 'Shalat Maghrib', completed: false },
+      { id: 5, text: 'Shalat Isya', completed: false },
+      { id: 6, text: 'Puasa Hari Ini', completed: false },
+      { id: 7, text: 'Baca Quran', completed: false },
+      { id: 8, text: 'Bantu Orang Tua', completed: false },
+      { id: 9, text: 'Sedekah', completed: false },
+    ];
+
+    const defaultUserData = {
+      tasks: defaultTasks,
+      dinar: 0,
+      streak: 0,
+      ownedSkins: ['normal'],
+      activeSkin: 'normal',
+      taskCounts: {},
+      unlockedAchievements: [],
+      lastQuizDate: '',
+      completedJuz: [],
+      completedSurah: [],
+      totalAyatRead: 0,
+    };
+
+    const praises = ["Alhamdulillah!", "Hebat sekali!", "MashaAllah!", "Luar biasa!", "Keren!"];
+
+    // ==================== SPEECH ====================
+    const speak = (text) => {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        utterance.rate = 1;
+        utterance.pitch = 1.2;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+
+    // ==================== CONFETTI ====================
+    const Confetti = ({ show }) => {
+      if (!show) return null;
+      const colors = ['#D4AF37', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B'];
+      return (
+        <React.Fragment>
+          {Array.from({ length: 40 }).map((_, i) => (
+            <div key={i} className="confetti" style={{
+              left: Math.random() * 100 + '%',
+              top: '-15px',
+              backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+              borderRadius: Math.random() > 0.5 ? '50%' : '0',
+              animationDelay: Math.random() * 0.4 + 's',
+            }} />
+          ))}
+        </React.Fragment>
+      );
+    };
+
+    // ==================== USER SELECT ====================
+    const UserSelect = ({ onSelect }) => {
+      const [users, setUsers] = useState(() => {
+        const saved = localStorage.getItem('kebun_users');
+        return saved ? JSON.parse(saved) : [];
+      });
+      const [newName, setNewName] = useState('');
+      const [showCreate, setShowCreate] = useState(false);
+
+      const createUser = () => {
+        if (!newName.trim()) return;
+        const name = newName.trim();
+        if (!users.includes(name)) {
+          const updated = [...users, name];
+          setUsers(updated);
+          localStorage.setItem('kebun_users', JSON.stringify(updated));
+          localStorage.setItem('kebun_data_' + name, JSON.stringify(defaultUserData));
+        }
+        setNewName('');
+        setShowCreate(false);
+        onSelect(name);
+      };
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <div className="glass rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border border-white/30">
+            <div className="text-6xl mb-4">🌙</div>
+            <h1 className="text-2xl font-black text-teal-800 mb-2">Kebun Kebaikan</h1>
+            <p className="text-teal-600 text-sm mb-6">Ultimate Edition v4.0</p>
+
+            {users.length > 0 && !showCreate && (
+              <div className="space-y-3 mb-6">
+                <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">Pilih Akun</p>
+                {users.map(user => (
+                  <button key={user} onClick={() => onSelect(user)}
+                    className="w-full p-4 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl font-bold hover:from-teal-700 hover:to-teal-800 transition shadow-lg flex items-center justify-center gap-3">
+                    <span className="text-2xl">👤</span> {user}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {showCreate ? (
+              <div className="space-y-4">
+                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Masukkan namamu..."
+                  className="w-full p-4 rounded-xl border-2 border-teal-200 focus:border-teal-500 outline-none text-center font-semibold" />
+                <div className="flex gap-2">
+                  <button onClick={() => setShowCreate(false)} className="flex-1 p-3 bg-gray-200 rounded-xl font-bold text-gray-600">Batal</button>
+                  <button onClick={createUser} className="flex-1 p-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl font-bold shadow-lg">Buat Akun</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setShowCreate(true)}
+                className="w-full p-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl font-bold hover:from-amber-600 hover:to-yellow-600 transition shadow-lg flex items-center justify-center gap-2">
+                <span className="text-xl">➕</span> Buat Akun Baru
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // ==================== MAIN APP ====================
+    const MainApp = ({ userName, onLogout }) => {
+      const storageKey = 'kebun_data_' + userName;
+
+      const loadData = () => {
+        const saved = localStorage.getItem(storageKey);
+        return saved ? { ...defaultUserData, ...JSON.parse(saved) } : defaultUserData;
+      };
+
+      const [data, setData] = useState(loadData);
+      const [currentPage, setCurrentPage] = useState('home');
+      const [floatingDinars, setFloatingDinars] = useState([]);
+      const [showConfetti, setShowConfetti] = useState(false);
+      const [quizActive, setQuizActive] = useState(false);
+      const [currentQuestion, setCurrentQuestion] = useState(null);
+      const [quizResult, setQuizResult] = useState(null);
+      const [gachaResult, setGachaResult] = useState(null);
+      const [isGachaAnimating, setIsGachaAnimating] = useState(false);
+      const [showSettings, setShowSettings] = useState(false);
+      const [quranMode, setQuranMode] = useState('juz');
+
+      const { tasks, dinar, streak, ownedSkins, activeSkin, taskCounts, unlockedAchievements, lastQuizDate, completedJuz, completedSurah, totalAyatRead } = data;
+      const completedCount = tasks.filter(t => t.completed).length;
+      const progress = Math.round((completedCount / tasks.length) * 100);
+      const today = new Date().toDateString();
+      const canPlayQuiz = lastQuizDate !== today;
+      const quranProgress = Math.round((completedJuz.length / 30) * 100);
+
+      // Save to localStorage
+      useEffect(() => {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      }, [data, storageKey]);
+
+      // Check Achievements
+      useEffect(() => {
+        achievements.forEach(ach => {
+          const count = taskCounts[ach.taskId] || 0;
+          if (count >= ach.required && !unlockedAchievements.includes(ach.id)) {
+            setData(prev => ({ ...prev, unlockedAchievements: [...prev.unlockedAchievements, ach.id] }));
+            setShowConfetti(true);
+            speak("Selamat! Kamu dapat medali baru!");
+            setTimeout(() => setShowConfetti(false), 3000);
+          }
+        });
+      }, [taskCounts]);
+
+      const addDinar = (amount, x) => {
+        const newFloat = { id: Date.now(), x: x || (Math.random() * 50 + 25), amount };
+        setFloatingDinars(prev => [...prev, newFloat]);
+        setTimeout(() => setFloatingDinars(prev => prev.filter(f => f.id !== newFloat.id)), 1000);
+        setData(prev => ({ ...prev, dinar: prev.dinar + amount }));
+      };
+
+      const toggleTask = (id) => {
+        const task = tasks.find(t => t.id === id);
+        if (!task.completed) {
+          addDinar(10);
+          setData(prev => ({ ...prev, taskCounts: { ...prev.taskCounts, [id]: (prev.taskCounts[id] || 0) + 1 } }));
+          speak(praises[Math.floor(Math.random() * praises.length)]);
+        }
+        setData(prev => ({ ...prev, tasks: prev.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t) }));
+      };
+
+      const resetDay = () => {
+        if (progress === 100) {
+          setData(prev => ({ ...prev, streak: prev.streak + 1 }));
+          setShowConfetti(true);
+          speak("Alhamdulillah! Streak bertambah!");
+          setTimeout(() => setShowConfetti(false), 3000);
+        }
+        setData(prev => ({ ...prev, tasks: prev.tasks.map(t => ({ ...t, completed: false })) }));
+      };
+
+      const startQuiz = () => {
+        if (!canPlayQuiz) return;
+        setCurrentQuestion(quizQuestions[Math.floor(Math.random() * quizQuestions.length)]);
+        setQuizActive(true);
+        setQuizResult(null);
+      };
+
+      const answerQuiz = (index) => {
+        const isCorrect = index === currentQuestion.answer;
+        setQuizResult({ correct: isCorrect, correctAnswer: currentQuestion.options[currentQuestion.answer] });
+        if (isCorrect) {
+          addDinar(50);
+          setShowConfetti(true);
+          speak("Benar! Lima puluh Dinar untukmu!");
+          setTimeout(() => setShowConfetti(false), 3000);
+        } else {
+          speak("Belum tepat, coba lagi besok ya!");
+        }
+        setData(prev => ({ ...prev, lastQuizDate: today }));
+        setTimeout(() => { setQuizActive(false); setCurrentQuestion(null); setQuizResult(null); }, 3000);
+      };
+
+      const buyMysteryBox = () => {
+        if (dinar < 200) { speak("Dinar tidak cukup!"); return; }
+        setData(prev => ({ ...prev, dinar: prev.dinar - 200 }));
+        setIsGachaAnimating(true);
+        speak("Membuka kotak misteri!");
+        setTimeout(() => {
+          const roll = Math.random() * 100;
+          let cumulative = 0, result = plantSkins[0];
+          for (const skin of plantSkins) {
+            cumulative += skin.chance;
+            if (roll < cumulative) { result = skin; break; }
+          }
+          if (!ownedSkins.includes(result.id)) {
+            setData(prev => ({ ...prev, ownedSkins: [...prev.ownedSkins, result.id] }));
+          }
+          setGachaResult(result);
+          setIsGachaAnimating(false);
+          speak("Kamu dapat " + result.name + "!");
+          if (result.rarity !== 'Common') {
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 3000);
+          }
+        }, 2000);
+      };
+
+      const completeJuz = (juzNum) => {
+        if (completedJuz.includes(juzNum)) return;
+        setData(prev => ({ ...prev, completedJuz: [...prev.completedJuz, juzNum] }));
+        addDinar(100, 50);
+        setShowConfetti(true);
+        speak("MashaAllah! Seratus Dinar untuk Juz " + juzNum + "!");
+        setTimeout(() => setShowConfetti(false), 3000);
+      };
+
+      const completeSurah = (surahId) => {
+        if (completedSurah.includes(surahId)) return;
+        setData(prev => ({ ...prev, completedSurah: [...prev.completedSurah, surahId] }));
+        addDinar(50, 50);
+        const surah = surahList.find(s => s.id === surahId);
+        if (surah) {
+          speak("Alhamdulillah! Lima puluh Dinar untuk " + surah.name + "!");
+        }
+      };
+
+      const addAyat = (count) => {
+        setData(prev => ({ ...prev, totalAyatRead: prev.totalAyatRead + count }));
+        const dinarReward = Math.floor(count / 10);
+        if (dinarReward > 0) {
+          addDinar(dinarReward, 50);
+        }
+        speak("Tambah " + count + " ayat!");
+        const milestones = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 6236];
+        if (milestones.includes(totalAyatRead + count)) {
+          setShowConfetti(true);
+          speak("SubhanAllah! Milestone " + (totalAyatRead + count) + " ayat!");
+          setTimeout(() => setShowConfetti(false), 3000);
+        }
+      };
+
+
+      const generateReport = () => {
+        const completedTasks = tasks.filter(t => t.completed).map(t => t.text).join(', ') || 'Belum ada';
+        const text = `Assalamualaikum Bunda/Ayah! 🌙\n\nHari ini ${userName} sudah mengerjakan:\n✅ ${completedTasks}\n\n💰 Saldo Dinar: ${dinar}\n🌱 Tanaman: ${progress}% tumbuh\n📖 Quran: ${completedJuz.length}/30 Juz\n🔥 Streak: ${streak} hari\n\nMohon doanya ya! 💚`;
+
+        navigator.clipboard.writeText(text).then(() => {
+          speak("Laporan sudah disalin!");
+          const waLink = 'https://wa.me/?text=' + encodeURIComponent(text);
+          window.open(waLink, '_blank');
+        });
+      };
+
+      const getPlantEmoji = () => {
+        const skin = plantSkins.find(s => s.id === activeSkin);
+        if (progress < 25) return '🌱';
+        if (progress < 50) return '🌿';
+        if (progress < 75) return skin ? skin.emoji : '🌳';
+        return skin ? skin.emoji : '🌸';
+      };
+
+      const activeSkinData = plantSkins.find(s => s.id === activeSkin);
+
+      return (
+        <div className="min-h-screen pb-24">
+          <Confetti show={showConfetti} />
+
+          {floatingDinars.map(f => (
+            <div key={f.id} className="fixed float-dinar text-xl font-black gold-text z-50 pointer-events-none drop-shadow-lg" style={{ left: f.x + '%', top: '35%' }}>
+              +{f.amount} 🪙
+            </div>
+          ))}
+
+          {/* Header */}
+          <div className="header-gradient p-5 text-white rounded-b-[2rem] shadow-2xl relative">
+            <div className="flex justify-between items-center max-w-lg mx-auto">
+              <div>
+                <p className="text-teal-300 text-xs">Assalamualaikum,</p>
+                <h1 className="text-xl font-black">{userName} 👋</h1>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="gold-bg text-teal-900 px-4 py-2 rounded-full font-black text-sm flex items-center gap-1 shadow-lg animate-glow">
+                  🪙 {dinar}
+                </div>
+                <button onClick={() => setShowSettings(true)} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  ⚙️
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Settings Modal */}
+          {showSettings && (
+            <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-6" onClick={() => setShowSettings(false)}>
+              <div className="glass rounded-3xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+                <h3 className="text-xl font-black text-teal-800 mb-4 text-center">⚙️ Pengaturan</h3>
+                <button onClick={generateReport} className="w-full p-4 mb-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold flex items-center justify-center gap-2">
+                  📢 Lapor ke Bunda/Ayah
+                </button>
+                <button onClick={() => { setShowSettings(false); onLogout(); }} className="w-full p-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-bold">
+                  🔄 Ganti Akun
+                </button>
+                <button onClick={() => setShowSettings(false)} className="w-full p-3 mt-3 text-gray-500 font-semibold">Tutup</button>
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="max-w-lg mx-auto px-4 mt-5">
+
+            {/* HOME */}
+            {currentPage === 'home' && (
+              <div className="space-y-4 animate-slide-up">
+                <div className="glass rounded-3xl shadow-2xl p-6 text-center border border-white/30">
+                  <div className="text-[10px] font-bold gold-text uppercase tracking-widest mb-1">Status Tanaman</div>
+                  <div className="text-7xl mt-2 mb-2 animate-bounce-slow">{getPlantEmoji()}</div>
+                  <p className="text-gray-600 font-semibold text-sm">{progress === 100 ? 'Sempurna! 🌟' : progress < 50 ? 'Terus semangat!' : 'Hampir berbunga!'}</p>
+                  <div className="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
+                    <div className="bg-gradient-to-r from-teal-500 to-emerald-500 h-3 rounded-full transition-all duration-500" style={{ width: progress + '%' }}></div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">{progress}% Progress</p>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="flex-1 glass rounded-2xl p-3 text-center border border-white/30">
+                    <span className="text-xl">🔥</span>
+                    <p className="text-sm font-bold text-orange-500">{streak}</p>
+                    <p className="text-[9px] text-gray-400">Streak</p>
+                  </div>
+                  <div className="flex-1 glass rounded-2xl p-3 text-center border border-white/30">
+                    <span className="text-xl">{activeSkinData ? activeSkinData.emoji : '🌳'}</span>
+                    <p className="text-sm font-bold text-teal-600 truncate">{activeSkinData ? activeSkinData.name : 'Pohon'}</p>
+                    <p className="text-[9px] text-gray-400">Skin</p>
+                  </div>
+                  <div className="flex-1 glass rounded-2xl p-3 text-center border border-white/30">
+                    <span className="text-xl">📖</span>
+                    <p className="text-sm font-bold text-purple-600">{completedJuz.length}/30</p>
+                    <p className="text-[9px] text-gray-400">Juz</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {tasks.map(task => (
+                    <div key={task.id} onClick={() => toggleTask(task.id)}
+                      className={'glass flex items-center p-3 rounded-xl cursor-pointer transition-all border hover:scale-[1.01] ' + (task.completed ? 'border-teal-300 bg-teal-50/90' : 'border-white/30')}>
+                      <div className={'w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center text-xs ' + (task.completed ? 'bg-teal-500 border-teal-500 text-white' : 'border-gray-300')}>
+                        {task.completed && '✓'}
+                      </div>
+                      <span className={'font-semibold flex-1 text-sm ' + (task.completed ? 'line-through text-teal-600' : 'text-gray-700')}>{task.text}</span>
+                      {!task.completed && <span className="gold-text text-xs font-bold">+10</span>}
+                    </div>
+                  ))}
+                </div>
+
+                <button onClick={resetDay} className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-3.5 rounded-2xl font-bold shadow-xl">
+                  Mulai Hari Baru ☀️
+                </button>
+              </div>
+            )}
+
+            {/* QURAN */}
+            {currentPage === 'quran' && (
+              <div className="space-y-4 animate-slide-up">
+                <div className="glass rounded-3xl shadow-2xl p-5 border border-white/30">
+                  <h2 className="text-lg font-black text-teal-800 mb-3 text-center">📖 Quran Journey</h2>
+
+                  {/* Mode Switcher */}
+                  <div className="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl">
+                    <button onClick={() => setQuranMode('juz')}
+                      className={'flex-1 py-2 px-3 rounded-lg font-bold text-sm transition ' + (quranMode === 'juz' ? 'gold-bg text-teal-900 shadow' : 'text-gray-600')}>
+                      Juz
+                    </button>
+                    <button onClick={() => setQuranMode('surah')}
+                      className={'flex-1 py-2 px-3 rounded-lg font-bold text-sm transition ' + (quranMode === 'surah' ? 'bg-emerald-500 text-white shadow' : 'text-gray-600')}>
+                      Surah
+                    </button>
+                    <button onClick={() => setQuranMode('ayat')}
+                      className={'flex-1 py-2 px-3 rounded-lg font-bold text-sm transition ' + (quranMode === 'ayat' ? 'bg-purple-500 text-white shadow' : 'text-gray-600')}>
+                      Ayat
+                    </button>
+                  </div>
+
+                  {/* MODE: JUZ */}
+                  {quranMode === 'juz' && (
+                    <React.Fragment>
+                      <p className="text-xs text-gray-500 text-center mb-3">Tap juz yang sudah dibaca (+100 Dinar)</p>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                        <div className="gold-bg h-2 rounded-full transition-all" style={{ width: Math.round((completedJuz.length / 30) * 100) + '%' }}></div>
+                      </div>
+                      <p className="text-center text-sm font-bold gold-text mb-4">{completedJuz.length}/30 Juz Selesai</p>
+
+                      <div className="grid grid-cols-6 gap-2">
+                        {Array.from({ length: 30 }).map((_, i) => {
+                          const juzNum = i + 1;
+                          const isCompleted = completedJuz.includes(juzNum);
+                          return (
+                            <button key={juzNum} onClick={() => completeJuz(juzNum)}
+                              className={'juz-box w-full aspect-square rounded-lg flex items-center justify-center font-bold text-sm border-2 ' +
+                                (isCompleted ? 'juz-completed border-yellow-400 shadow-lg' : 'bg-white border-gray-200 text-gray-600 hover:border-teal-400')}>
+                              {juzNum}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {completedJuz.length === 30 && (
+                        <div className="mt-4 bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-4 text-center border-2 border-yellow-300">
+                          <p className="text-2xl mb-1">🎊</p>
+                          <p className="font-black gold-text">KHATAM 30 JUZ!</p>
+                          <p className="text-xs text-gray-600">Alhamdulillah, MashaAllah!</p>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+
+                  {/* MODE: SURAH */}
+                  {quranMode === 'surah' && (
+                    <React.Fragment>
+                      <p className="text-xs text-gray-500 text-center mb-3">Tap surah yang sudah selesai (+50 Dinar)</p>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                        <div className="bg-emerald-500 h-2 rounded-full transition-all" style={{ width: Math.round((completedSurah.length / 114) * 100) + '%' }}></div>
+                      </div>
+                      <p className="text-center text-sm font-bold text-emerald-600 mb-4">{completedSurah.length}/114 Surah Selesai</p>
+
+                      <div className="max-h-96 overflow-y-auto space-y-2">
+                        {surahList.map(surah => {
+                          const isCompleted = completedSurah.includes(surah.id);
+                          return (
+                            <button key={surah.id} onClick={() => completeSurah(surah.id)}
+                              className={'w-full text-left p-3 rounded-xl border-2 transition flex items-center justify-between ' +
+                                (isCompleted ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-gray-200 hover:border-emerald-400')}>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className={'font-bold text-xs w-8 h-8 rounded-full flex items-center justify-center ' + (isCompleted ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600')}>
+                                    {surah.id}
+                                  </span>
+                                  <div>
+                                    <p className={'font-bold text-sm ' + (isCompleted ? 'text-emerald-700' : 'text-gray-800')}>{surah.name}</p>
+                                    <p className="text-xs text-gray-400">{surah.ayat} ayat • Juz {surah.juz}</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-lg font-bold text-teal-700" style={{ fontFamily: 'Arial' }}>{surah.arabic}</p>
+                                {isCompleted && <span className="text-emerald-500 text-xs">✓ Selesai</span>}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {completedSurah.length === 114 && (
+                        <div className="mt-4 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-xl p-4 text-center border-2 border-emerald-300">
+                          <p className="text-2xl mb-1">🎉</p>
+                          <p className="font-black text-emerald-700">KHATAM 114 SURAH!</p>
+                          <p className="text-xs text-gray-600">SubhanAllah!</p>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+
+                  {/* MODE: AYAT */}
+                  {quranMode === 'ayat' && (
+                    <React.Fragment>
+                      <p className="text-xs text-gray-500 text-center mb-3">Catat jumlah ayat yang dibaca (+1 Dinar/10 ayat)</p>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                        <div className="bg-purple-500 h-2 rounded-full transition-all" style={{ width: Math.round((totalAyatRead / 6236) * 100) + '%' }}></div>
+                      </div>
+                      <p className="text-center text-sm font-bold text-purple-600 mb-4">{totalAyatRead}/6,236 Ayat</p>
+
+                      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 text-center mb-4 border-2 border-purple-200">
+                        <p className="text-5xl font-black text-purple-700 mb-2">{totalAyatRead}</p>
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">Total Ayat Dibaca</p>
+                      </div>
+
+                      <p className="text-sm font-bold text-gray-700 mb-3 text-center">Tambah Ayat</p>
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <button onClick={() => addAyat(10)} className="p-3 bg-purple-100 hover:bg-purple-200 rounded-xl font-bold text-purple-700 border-2 border-purple-300">
+                          +10
+                        </button>
+                        <button onClick={() => addAyat(50)} className="p-3 bg-purple-100 hover:bg-purple-200 rounded-xl font-bold text-purple-700 border-2 border-purple-300">
+                          +50
+                        </button>
+                        <button onClick={() => addAyat(100)} className="p-3 bg-purple-100 hover:bg-purple-200 rounded-xl font-bold text-purple-700 border-2 border-purple-300">
+                          +100
+                        </button>
+                      </div>
+
+                      {totalAyatRead >= 6236 && (
+                        <div className="mt-4 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl p-4 text-center border-2 border-purple-300">
+                          <p className="text-2xl mb-1">🌟</p>
+                          <p className="font-black text-purple-700">KHATAM AL-QURAN!</p>
+                          <p className="text-xs text-gray-600">6,236 Ayat Sempurna!</p>
+                        </div>
+                      )}
+
+                      <div className="mt-4 bg-gray-50 rounded-xl p-3">
+                        <p className="text-xs font-bold text-gray-600 mb-2">🎯 Milestone Ayat</p>
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          {[100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 6236].map(milestone => (
+                            <div key={milestone} className={'p-2 rounded-lg text-center ' + (totalAyatRead >= milestone ? 'bg-purple-500 text-white font-bold' : 'bg-white text-gray-400')}>
+                              {milestone >= 1000 ? (milestone / 1000).toFixed(1) + 'k' : milestone}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* QUIZ */}
+            {currentPage === 'quiz' && (
+              <div className="space-y-4 animate-slide-up">
+                <div className="glass rounded-3xl shadow-2xl p-6 text-center border border-white/30">
+                  <h2 className="text-lg font-black text-teal-800 mb-1">🧠 Kuis Islami</h2>
+                  <p className="text-gray-500 text-sm mb-4">Jawab benar = +50 Dinar!</p>
+
+                  {!quizActive && !quizResult && (
+                    <React.Fragment>
+                      <div className="text-5xl mb-4">📚</div>
+                      {canPlayQuiz ? (
+                        <button onClick={startQuiz} className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg">
+                          Main Kuis! 🎮
+                        </button>
+                      ) : (
+                        <div className="bg-gray-100 rounded-xl p-4">
+                          <p className="text-gray-500 font-semibold">⏰ Kembali besok!</p>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+
+                  {quizActive && currentQuestion && !quizResult && (
+                    <div className="text-left">
+                      <p className="font-bold text-gray-800 mb-4">{currentQuestion.q}</p>
+                      <div className="space-y-2">
+                        {currentQuestion.options.map((opt, i) => (
+                          <button key={i} onClick={() => answerQuiz(i)}
+                            className="w-full text-left p-3 rounded-xl border-2 border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition font-medium text-sm">
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {quizResult && (
+                    <div className={'p-5 rounded-2xl ' + (quizResult.correct ? 'bg-teal-100' : 'bg-red-50')}>
+                      <div className="text-4xl mb-2">{quizResult.correct ? '🎉' : '😊'}</div>
+                      <p className={'font-bold ' + (quizResult.correct ? 'text-teal-700' : 'text-red-600')}>
+                        {quizResult.correct ? 'BENAR! +50 Dinar' : 'Belum Tepat'}
+                      </p>
+                      {!quizResult.correct && <p className="text-sm text-gray-600 mt-1">Jawaban: {quizResult.correctAnswer}</p>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SHOP */}
+            {currentPage === 'shop' && (
+              <div className="space-y-4 animate-slide-up">
+                <div className="glass rounded-3xl shadow-2xl p-5 border border-white/30">
+                  <h2 className="text-lg font-black text-teal-800 mb-4 text-center">🛒 Toko</h2>
+
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-4 text-white mb-4">
+                    <h3 className="font-bold">🎁 Kotak Misteri</h3>
+                    <p className="text-purple-200 text-xs mb-3">Skin Tanaman Langka!</p>
+                    {isGachaAnimating ? (
+                      <div className="text-center py-3"><div className="text-4xl animate-shake">🎁</div></div>
+                    ) : gachaResult ? (
+                      <div className="bg-white/20 rounded-xl p-3 text-center">
+                        <div className="text-4xl mb-1">{gachaResult.emoji}</div>
+                        <p className="font-bold">{gachaResult.name}</p>
+                        <p className="text-xs text-purple-200">{gachaResult.rarity}</p>
+                        <button onClick={() => setGachaResult(null)} className="mt-2 bg-white/20 px-4 py-1 rounded-full text-sm">OK</button>
+                      </div>
+                    ) : (
+                      <button onClick={buyMysteryBox} disabled={dinar < 200}
+                        className={'w-full py-2.5 rounded-xl font-bold ' + (dinar >= 200 ? 'gold-bg text-teal-900' : 'bg-gray-400 text-gray-600 cursor-not-allowed')}>
+                        {dinar >= 200 ? 'Beli 200 🪙' : 'Kurang Dinar'}
+                      </button>
+                    )}
+                  </div>
+
+                  <h3 className="font-bold text-gray-700 mb-2 text-sm">Koleksi Skin</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {plantSkins.map(skin => {
+                      const owned = ownedSkins.includes(skin.id);
+                      const active = activeSkin === skin.id;
+                      return (
+                        <div key={skin.id} className={'rounded-xl p-3 text-center border-2 ' + (owned ? (active ? 'bg-teal-50 border-teal-400' : 'bg-white border-gray-200') : 'bg-gray-100 border-gray-200 opacity-50')}>
+                          <div className="text-3xl mb-1">{owned ? skin.emoji : '🔒'}</div>
+                          <p className={'font-bold text-xs ' + skin.color}>{skin.name}</p>
+                          <p className="text-[9px] text-gray-400">{skin.rarity}</p>
+                          {owned && !active && (
+                            <button onClick={() => { setData(prev => ({ ...prev, activeSkin: skin.id })); speak("Terima kasih!"); }}
+                              className="mt-1 bg-teal-500 text-white text-[10px] px-2 py-0.5 rounded-full">Pakai</button>
+                          )}
+                          {active && <span className="mt-1 inline-block bg-teal-100 text-teal-600 text-[10px] px-2 py-0.5 rounded-full">✓ Aktif</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TROPHY */}
+            {currentPage === 'trophy' && (
+              <div className="space-y-4 animate-slide-up">
+                <div className="glass rounded-3xl shadow-2xl p-5 border border-white/30">
+                  <h2 className="text-lg font-black text-teal-800 mb-4 text-center">🏆 Pencapaian</h2>
+                  <div className="space-y-2">
+                    {achievements.map(ach => {
+                      const unlocked = unlockedAchievements.includes(ach.id);
+                      const count = taskCounts[ach.taskId] || 0;
+                      const pct = Math.min((count / ach.required) * 100, 100);
+                      return (
+                        <div key={ach.id} className={'rounded-xl p-3 border-2 ' + (unlocked ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-300' : 'bg-gray-50 border-gray-200')}>
+                          <div className="flex items-center gap-3">
+                            <div className="text-3xl">{unlocked ? '🥇' : '🔒'}</div>
+                            <div className="flex-1">
+                              <p className={'font-bold text-sm ' + (unlocked ? 'gold-text' : 'text-gray-500')}>{ach.icon} {ach.name}</p>
+                              <p className="text-[10px] text-gray-400">{ach.desc}</p>
+                              {!unlocked && (
+                                <div className="mt-1">
+                                  <div className="w-full bg-gray-200 rounded-full h-1">
+                                    <div className="gold-bg h-1 rounded-full" style={{ width: pct + '%' }}></div>
+                                  </div>
+                                  <p className="text-[9px] text-gray-400">{count}/{ach.required}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Tab Bar */}
+          <div className="tab-bar glass-dark border-t border-white/10 px-2 py-2">
+            <div className="max-w-lg mx-auto flex justify-around">
+              {[
+                { id: 'home', icon: '🏠', label: 'Beranda' },
+                { id: 'quran', icon: '📖', label: 'Quran' },
+                { id: 'quiz', icon: '🧠', label: 'Kuis' },
+                { id: 'shop', icon: '🛒', label: 'Toko' },
+                { id: 'trophy', icon: '🏆', label: 'Piala' },
+              ].map(tab => (
+                <button key={tab.id} onClick={() => setCurrentPage(tab.id)}
+                  className={'flex flex-col items-center px-3 py-1.5 rounded-xl transition ' + (currentPage === tab.id ? 'gold-bg text-teal-900 shadow-lg' : 'text-gray-400')}>
+                  <span className="text-lg">{tab.icon}</span>
+                  <span className="text-[9px] font-bold">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ==================== ROOT ====================
+    const App = () => {
+      const [currentUser, setCurrentUser] = useState(() => localStorage.getItem('kebun_current_user') || '');
+
+      const handleSelect = (name) => {
+        localStorage.setItem('kebun_current_user', name);
+        setCurrentUser(name);
+      };
+
+      const handleLogout = () => {
+        localStorage.removeItem('kebun_current_user');
+        setCurrentUser('');
+      };
+
+      if (!currentUser) {
+        return <UserSelect onSelect={handleSelect} />;
+      }
+
+      return <MainApp userName={currentUser} onLogout={handleLogout} />;
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
