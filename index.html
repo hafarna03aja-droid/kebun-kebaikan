@@ -360,16 +360,39 @@
     const praises = ["Alhamdulillah!", "Hebat sekali!", "MashaAllah!", "Luar biasa!", "Keren!"];
 
     // ==================== SPEECH ====================
+    let voicesLoaded = false;
+    let availableVoices = [];
+
+    // Load voices (important for mobile browsers)
+    const loadVoices = () => {
+      availableVoices = window.speechSynthesis.getVoices();
+      voicesLoaded = availableVoices.length > 0;
+    };
+
+    // Load voices immediately
+    if ('speechSynthesis' in window) {
+      loadVoices();
+
+      // Voices may load asynchronously on mobile
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+    }
+
     const speak = (text) => {
       if ('speechSynthesis' in window) {
+        // Ensure voices are loaded
+        if (!voicesLoaded) {
+          loadVoices();
+        }
+
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'id-ID';
         utterance.rate = 1;
         utterance.pitch = 1.2;
 
         // Try to find Indonesian voice
-        const voices = window.speechSynthesis.getVoices();
-        const indonesianVoice = voices.find(voice =>
+        const indonesianVoice = availableVoices.find(voice =>
           voice.lang.includes('id') ||
           voice.lang.includes('ID') ||
           voice.name.toLowerCase().includes('indonesian')
