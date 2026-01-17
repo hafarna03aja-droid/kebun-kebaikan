@@ -388,15 +388,28 @@
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'id-ID';
-        utterance.rate = 1;
-        utterance.pitch = 1.2;
 
-        // Try to find Indonesian voice
-        const indonesianVoice = availableVoices.find(voice =>
-          voice.lang.includes('id') ||
-          voice.lang.includes('ID') ||
-          voice.name.toLowerCase().includes('indonesian')
+        // More natural speaking parameters
+        utterance.rate = 0.9;      // Slightly slower = more natural
+        utterance.pitch = 1.0;     // Normal pitch (not robotic high)
+        utterance.volume = 1.0;    // Full volume
+
+        // Prioritize female voices (usually more natural sounding)
+        let indonesianVoice = availableVoices.find(voice =>
+          (voice.lang.includes('id') || voice.lang.includes('ID')) &&
+          (voice.name.toLowerCase().includes('female') ||
+            voice.name.toLowerCase().includes('damayanti') ||
+            voice.name.toLowerCase().includes('andika'))
         );
+
+        // Fallback to any Indonesian voice
+        if (!indonesianVoice) {
+          indonesianVoice = availableVoices.find(voice =>
+            voice.lang.includes('id') ||
+            voice.lang.includes('ID') ||
+            voice.name.toLowerCase().includes('indonesian')
+          );
+        }
 
         if (indonesianVoice) {
           utterance.voice = indonesianVoice;
